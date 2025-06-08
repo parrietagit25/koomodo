@@ -1,6 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mensaje, setMensaje] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:8000/api/login/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        setMensaje('Inicio de sesión exitoso');
+        // Redireccionar o ir a otra vista
+        window.location.href = '/dashboard';
+      } else {
+        setMensaje(data.error || 'Credenciales incorrectas');
+      }
+    } catch (error) {
+      setMensaje('Error de conexión con el servidor');
+    }
+  };
+
   return (
     <div
       className="d-flex justify-content-center align-items-center vh-100"
@@ -23,16 +57,28 @@ const Login = () => {
         <h5 className="text-center mb-1 fw-bold">Bienvenido de nuevo</h5>
         <p className="text-center text-white-50 mb-4">Inicia sesión en tu cuenta</p>
 
-        <form>
+        {mensaje && (
+          <div className="alert alert-warning py-1 text-center" style={{ fontSize: '0.9rem' }}>
+            {mensaje}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin}>
           <input
-            type="email"
+            type="text"
             placeholder="Correo electrónico"
             className="form-control mb-3 bg-dark text-white border border-secondary"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="password"
             placeholder="Contraseña"
             className="form-control mb-3 bg-dark text-white border border-secondary"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <button
             type="submit"
@@ -54,8 +100,12 @@ const Login = () => {
         </button>
 
         <div className="d-flex justify-content-between mt-2">
-          <a href="#" className="text-white-50 text-decoration-none">¿Olvidaste tu contraseña?</a>
-          <a href="#" className="text-success fw-bold text-decoration-none">Regístrate</a>
+          <a href="#" className="text-white-50 text-decoration-none">
+            ¿Olvidaste tu contraseña?
+          </a>
+          <a href="#" className="text-success fw-bold text-decoration-none">
+            Regístrate
+          </a>
         </div>
       </div>
     </div>

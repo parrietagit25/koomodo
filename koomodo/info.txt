@@ -1,0 +1,11 @@
+http://localhost:8000/api/login/
+http://localhost:8000/api/usuarios/
+http://localhost:8000/api/register
+
+tayron 123456
+
+en un nuevo pc 
+npm install
+npm run dev 
+docker-compose up -d --build
+docker compose down 
